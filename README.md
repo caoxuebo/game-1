@@ -1,3 +1,3 @@
 #a game
 
-a game about something in some language
+running through the HTML5 book game tutorial to get more familiar with html5, canvas, and javascript
