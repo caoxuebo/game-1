@@ -10,7 +10,7 @@ window.addEventListener('load', function() {
 		],
 		
 		complete: function () {
-			console.log('All files loaded!');
+			jewel.game.showScreen("splash-screen");	
 		}
 	}
 	]);
