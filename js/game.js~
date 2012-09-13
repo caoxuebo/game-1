@@ -1,0 +1,14 @@
+jewel.game = (function() {
+    console.log('running');	
+	function showScreen(screenId) {
+		$('#game div').removeClass('active').hide();
+		$('#'+screenId).addClass('active').show();
+        console.log('#'+screenId);
+	}
+	
+	return {
+		showScreen : showScreen
+	};
+
+})();
+		

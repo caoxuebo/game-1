@@ -1,12 +1,13 @@
 jewel.game = (function() {
 	
-	function showScreen(screenId) {
-		$('div').removeClass('active');
-		$('#'+screenId).addCLass('active');
+    function showScreen(screenId) {
+		$('.screen').removeClass('active');
+		$('#'+screenId).addClass('active');
+		console.log(screenId);
 	}
 	
 	return {
-		showScreen : showScreen
+		showScreen: showScreen
 	};
 
 })();
