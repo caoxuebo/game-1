@@ -1,12 +1,15 @@
-var jewel = {};
+var jewel = {
+    screens: {}
+};
 
 window.addEventListener('load', function() {
 	Modernizr.load([
 	{
 		load: [
 			"js/jquery.js",
-			"js/dom.js",
-			"js/game.js"
+			"js/game.js",
+            "js/screen.splash.js",
+            "js/screen.main-menu.js"
 		],
 		
 		complete: function () {
