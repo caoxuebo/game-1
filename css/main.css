@@ -51,6 +51,17 @@ body {
 	filter: dropshadow(color=#000000,offX=3,offY=3);
 }
 
+#install-screen {
+	padding-top: 0.5em;
+	text-align: center;
+}
+
+#install-screen p {
+	font-size: 0.75em;
+	display: inline-block;
+	padding: 0 0.5em;
+}
+
 #main-menu {
     padding-top: 1em;
 }

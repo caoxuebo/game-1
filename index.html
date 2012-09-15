@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<title>Jewels</title>
+	<link rel="stylesheet" href="css/mobile.css" media='screen and (max-device-width: 768px) and (orientation: portrait), screen and (max-device-width: 1024px) and (orientation: landscape)'/>
 	<link rel="stylesheet" href="css/fonts.css">
     <link rel="stylesheet" href="css/main.css">
 </head>
@@ -13,7 +15,14 @@
 			<h1 class="logo">Jewel <br/>Warrior</h1>
             <p id="continue">Click to continue</p>
         </div>
-        <div class="screen" id="main-menu">
+		<div class="screen" id="install-screen">
+			<h1 class="logo">Jewel <br/>Warrior</h1>
+            <p id="continue">
+				Click the <img src="images/install-icon.png" alt="Install Icon"> 
+				button to install the game to your home screen.			
+			</p>
+        </div> 
+		<div class="screen" id="main-menu">
             <h2 class='logo'>Jewel <br />Warrior</h2>
             <ul class='menu'>
                 <li><button name='game-screen'>Play</button></li>
