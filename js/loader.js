@@ -19,6 +19,7 @@ window.addEventListener('load', function() {
 		nope: "js/screen.install.js",
 		
 		complete: function() {
+			jewel.game.setup();
 			if(Modernizr.standalone) {
 				jewel.game.showScreen("splash-screen");
 			} else {
@@ -26,14 +27,15 @@ window.addEventListener('load', function() {
 			}
 		}
 	}
-]);
+	]);
 
-if(Modernizr.standalone) {
-	Modernizr.load([
-	{
+	if(Modernizr.standalone) {
+		Modernizr.load([
+		{
 		load: [
             "js/screen.main-menu.js"
 		]	
 	}
 	]);
-}
+	}
+});
