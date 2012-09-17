@@ -1,5 +1,11 @@
 var jewel = {
-    screens: {}
+    screens: {},
+	settings: {
+		rows: 8,
+		cols: 8,
+		baseScore: 100,
+		numJewelTypes: 7
+	}
 };
 
 window.addEventListener('load', function() {
@@ -33,7 +39,8 @@ window.addEventListener('load', function() {
 		Modernizr.load([
 		{
 		load: [
-            "js/screen.main-menu.js"
+            "js/screen.main-menu.js",
+			"js/board.js"
 		]	
 	}
 	]);
