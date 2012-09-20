@@ -13,6 +13,11 @@ window.addEventListener('load', function() {
 		return(window.navigator.standalone != false);
 	});
 
+	yepnope.addPrefix("preload", function(resource) {
+		resource.noexec = true;
+		return resource;
+	});
+	
 	Modernizr.load([
 	{
 		load: [
@@ -38,11 +43,17 @@ window.addEventListener('load', function() {
 	if(Modernizr.standalone) {
 		Modernizr.load([
 		{
-		load: [
-            "js/screen.main-menu.js",
-			"js/board.js"
+			load: [
+				"js/screen.main-menu.js"
 		]	
-	}
-	]);
+		}, {
+			test: Modernizr.webworkers,
+			yep: [
+				"js/board.worker-interface.js",
+				"preload!js/board.worker.js"
+				],
+			nope: "js/board.js"
+		}
+		]);
 	}
 });
