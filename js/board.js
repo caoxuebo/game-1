@@ -1,6 +1,6 @@
 jewel.board = (function() {
 	var settings, jewels, cols, rows, baseScore, numJewelTypes;
-
+	
 	function initialize(callback) {
 		settings = jewel.settings;
 		numJewelTypes = settings.numJewelTypes;
@@ -10,6 +10,7 @@ jewel.board = (function() {
 		fillBoard();
 		callback();
 	}
+	
 	
 	function fillBoard() {
 		var x, y;
@@ -83,7 +84,7 @@ jewel.board = (function() {
 	function isAdjacent(x1, y1, x2, y2) {
 		var dx = Math.abs(x1 - x2), dy = Math.abs(y1 - y2);
 
-		return (dx+dy ==== 1);
+		return (dx+dy === 1);
 	}
 
 	function getChains() {
@@ -115,7 +116,7 @@ jewel.board = (function() {
 					score += baseScore * Math.pow(2, (chains[x][y] - 3));
 				} else if (gaps[x] > 0) {
 					moved.push({
-						toX: x, toY: y + gaps[x], fromX: x, fromY: y, type: getJewel(x, y);
+						toX: x, toY: y + gaps[x], fromX: x, fromY: y, type: getJewel(x, y)
 					});
 					jewels[x][y + gaps[x]] = getJewel(x,y);
 				}
