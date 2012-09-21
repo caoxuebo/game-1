@@ -1,3 +1,6 @@
+// LOADER SCRIPT -- preloads assets and checks compatiblity using Modernizr / yepnope
+
+// main objects of 'jewel' name space -- keep track of all "global vars
 var jewel = {
     screens: {},
 	images: {},
@@ -9,8 +12,10 @@ var jewel = {
 	}
 };
 
+//listen for 'load' event
 window.addEventListener('load', function() {
 
+	// uses 1 em div to calculate the size that one jewel should be
 	var jewelProto = document.getElementById("jewel-proto"), rect = jewelProto.getBoundingClientRect();
 	jewel.settings.jewelSize = rect.width;
 		
@@ -18,12 +23,13 @@ window.addEventListener('load', function() {
 		return(window.navigator.standalone != false);
 	});
 
+	// add preloader for webworker scripts -- not used yet
 	yepnope.addPrefix("preload", function(resource) {
 		resource.noexec = true;
 		return resource;
 	});
 	
-	//loader
+	// add loader for images
 	var numPreload = 0, numLoaded = 0;
 	yepnope.addPrefix("loader", function(resource) {
 		console.log("Loading: "+resource.url);
@@ -42,6 +48,7 @@ window.addEventListener('load', function() {
 		return resource;
 	});
 	
+	// helper function to return the current load progress for the splash screen
 	function getLoadProgress() {
 		if (numPreload > 0) {
 			return numLoaded / numPreload;
@@ -50,6 +57,7 @@ window.addEventListener('load', function() {
 		}
 	}
 	
+	// tests and assets to be loaded
 	Modernizr.load([
 	{
 		load: [
@@ -62,7 +70,9 @@ window.addEventListener('load', function() {
 		nope: "js/screen.install.js",
 		
 		complete: function() {
+			// set up background, touchscreen stuff
 			jewel.game.setup();
+			//if standalone load the game, if not, show the install screen to get iOS users to bookmark it
 			if(Modernizr.standalone) {
 				jewel.game.showScreen("splash-screen", getLoadProgress);
 			} else {
@@ -78,7 +88,7 @@ window.addEventListener('load', function() {
 			test: Modernizr.webworkers,
 			yep: [
 				"loader!js/board.js"
-				//"preload!js/board.worker.js"
+				//"preload!js/board.worker.js" -- too add/fix later
 				],
 			nope: "loader!js/board.js"
 		}, {

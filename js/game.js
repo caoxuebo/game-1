@@ -1,16 +1,25 @@
+// JEWEL GAME -- annonymous function containing functions to change, setup, and create the background
 jewel.game = (function() {
 	
+	// takes screenId parameter and uses jQuery / css to show that screen, then run the function for that screen
     function showScreen(screenId) {
+		// removes the 'active' screen from view
 		$('#game .screen.active').removeClass('active');
 		
+		// extract screen params from arguments to transfer load progress/high scores 
+		// loader.js passes 2 args -- jewel.showScreen("splash-screen", getLoadProgess), all other calls only use screenId.
+		// this pulls that arg out (interesting that you can call functions with more args than are defined as parameters
+		// in the function -- read more on this / see if i can do it differently
 		var args = Array.prototype.slice.call(arguments, 1);
 		jewel.screens[screenId].run.apply(jewel.screens[screenId], args);
-
+		
+		// adds the new screen to view
 		$('#'+screenId).addClass('active');
 	}
     
 	function setup() {
 	
+		// function to prevent various touch interaces from interacting negatively with the screen
 		$('body').on('touchmove', function(e) {
 			e.preventDefault();
 		});
@@ -25,8 +34,10 @@ jewel.game = (function() {
 		createBackground();
 	}
 	
+	//obvious
 	function createBackground() {
 		if(!Modernizr.canvas) return;
+		
 		var canvas = document.createElement("canvas"),
 		ctx = canvas.getContext("2d"), background = $(".background")[0], 
 		rect = background.getBoundingClientRect(), gradient, i;
