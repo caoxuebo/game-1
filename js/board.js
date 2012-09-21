@@ -13,7 +13,7 @@ jewel.board = (function() {
 	
 	
 	function fillBoard() {
-		var x, y;
+		var x, y, type;
 		jewels = [];
 		for(x = 0; x < cols; x++) {
 			jewels[x] = [];
@@ -40,7 +40,7 @@ jewel.board = (function() {
 	}
 
 	function randomJewel() {
-		return Math.floor(Math.random() + numJewelTypes);
+		return Math.floor(Math.random() * numJewelTypes);
 	}
 
 	function checkChain(x, y) {
@@ -146,7 +146,7 @@ jewel.board = (function() {
 
 	function getBoard() {
 		var copy = [], x;
-		for(x = 0; v < cols; x++) {
+		for(x = 0; x < cols; x++) {
 			copy[x] = jewels[x].slice(0);
 		}
 

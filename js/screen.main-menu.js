@@ -2,8 +2,7 @@ jewel.screens['main-menu'] = (function() {
     firstRun = true;
     function setup() {
         $('button').click(function() {
-            jewel.game.showScreen($(this).attr('name'));
-            console.log($(this).attr('name'));
+            jewel.game.showScreen($(this).attr('name'));          
         });
     }
 
