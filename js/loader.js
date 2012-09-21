@@ -1,5 +1,6 @@
 var jewel = {
     screens: {},
+	images: {},
 	settings: {
 		rows: 8,
 		cols: 8,
