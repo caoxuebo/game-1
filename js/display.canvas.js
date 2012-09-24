@@ -1,9 +1,13 @@
+// function (-slash-object-property) that draws the jewels onto the board
 jewel.display = (function() {
+
+	//declare variables, import settings from main jewel settings
 	var canvas, ctx, cols, rows, jewelSize, jewels, firstRun = true;
 	cols = jewel.settings.cols;
 	rows = jewel.settings.rows; 
 	jewelSize = jewel.settings.jewelSize;
 	
+	//run the first time the function is called -- calls function to create jewel grid background
 	function setup() {
 		var boardElement = $('#game-screen .game-board')[0];
 		canvas = $(".board")[0];
@@ -13,6 +17,7 @@ jewel.display = (function() {
 		createBackground();
 	}
 	
+	//creates grid background
 	function createBackground() {
 		var background = $(".board-bg")[0];
 		bgctx = background.getContext('2d');
@@ -29,12 +34,13 @@ jewel.display = (function() {
 		return background;
 	}
 		
-		
+	//helper function for the redraw method	(draws the jewel specified by 'type'
 	function drawJewel(type, x, y) {
 		var image = jewel.images["images/jewels" + jewelSize + ".png"];
 		ctx.drawImage(image, type * jewelSize, 0, jewelSize, jewelSize, x*jewelSize, y*jewelSize, jewelSize, jewelSize);
 	}
 	
+	//method with callback -- draws jewels across the entire board
 	function redraw(newJewels, callback) {
 		var x, y;
 		jewels = newJewels;
@@ -49,6 +55,7 @@ jewel.display = (function() {
 		callback();
 	}
 	
+	//only other (redraw) public function -- sets up the board the first time, and has callback
 	function initialize(callback) {
 		if(firstRun) {
 			setup();
@@ -57,6 +64,7 @@ jewel.display = (function() {
 		callback();
 	}
 	
+	//expose public functions
 	return {
 		initialize: initialize,
 		redraw: redraw

@@ -1,6 +1,9 @@
+//function that manipulates and keeps track of board state
 jewel.board = (function() {
+	//set up vars for the board, jewels, etc
 	var settings, jewels, cols, rows, baseScore, numJewelTypes;
 	
+	//init function to set up everything -- get board settings, fill the board, and then run the callback
 	function initialize(callback) {
 		settings = jewel.settings;
 		numJewelTypes = settings.numJewelTypes;
@@ -11,7 +14,8 @@ jewel.board = (function() {
 		callback();
 	}
 	
-	
+	//fills board with random jewels -- while loop and recursive call to hasMoves makes sure there are no matches set up initially 
+	//and that there are moves set up
 	function fillBoard() {
 		var x, y, type;
 		jewels = [];
@@ -31,6 +35,7 @@ jewel.board = (function() {
 		}
 	}
 	
+	//helper function -- gets jewel at given coords
 	function getJewel(x, y) {
 		if(x < 0 || x > cols - 1 || y < 0 || y > rows - 1) {
 			return -1;
@@ -39,10 +44,13 @@ jewel.board = (function() {
 		}
 	}
 
+	//function returns a random jewel
 	function randomJewel() {
 		return Math.floor(Math.random() * numJewelTypes);
 	}
 
+	//helper function for canSwap and checkChains-- returns the number of jewels that are matched in a row 
+	//(the greater number between the x and y axis)
 	function checkChain(x, y) {
 		var type = getJewel(x, y), left = 0, right = 0, down = 0, up = 0;
 
@@ -65,6 +73,8 @@ jewel.board = (function() {
 		return Math.max(left + 1 + right, up + 1 + down);
 	}
 
+	//helper function to determine whether a swap is valid (i.e. there is a chain to be made with the swap)
+	//temporaily swaps them, checks for a match, and swaps them back, then returns a boolean if there was a chain or not
 	function canSwap(x1, y1, x2, y2) {
 		var type1 = getJewel(x1,y1), type2 = getJewel(x2, y2), chain;
 		
@@ -81,12 +91,15 @@ jewel.board = (function() {
 		return chain;
 	}
 
+	//another helper function - makes sure the jewels that are being swaps are adjacent
 	function isAdjacent(x1, y1, x2, y2) {
 		var dx = Math.abs(x1 - x2), dy = Math.abs(y1 - y2);
 
 		return (dx+dy === 1);
 	}
 
+	//function that gets all chains that are currently on the board -- called after a successful swap to make sure
+	//everything is taken care of.
 	function getChains() {
 		var x, y, chains = [];
 
@@ -100,6 +113,10 @@ jewel.board = (function() {
 		return chains;
 	}
 	
+	//function checks if a chain was made, and adds the number of gaps in the board
+	//pushes the removed jewels into an array, pushes moved jewels into an array,
+	//and adds new jewels to replace old jewels and pushes any events that occured back
+	//to the calling function
 	function check(events) {
 		var chains = getChains(), hadChains = false, score = 0, removed = [],
 		moved = [], gaps = [];
@@ -128,22 +145,28 @@ jewel.board = (function() {
 				});
 			}
 		}
+		//checks to see if there were previous events, or inits a new empty array
 		events = events || [];
 
+		//if there were chains, add arrays of removed, moved jewels, as well as scores
 		if(hadChains){
 			events.push({ type: "remove", data: removed},
 						{ type: "score", data: score},
 						{ type: "move", data: moved});
+			//if there aren't any more moves available, refill the board and push a new board to events
 			if(!hasMoves()) {
 				fillBoard();
 				events.push({ type: "refill", data: getBoard() });
 			}
+			//recusively call events to make sure these events didn't trigger any more events
 			return check(events);
+		//if there weren't any chains, just return any events that happened
 		} else {
 			return events;
 		}
 	}
 
+	//function that just returns an exact copy of the board
 	function getBoard() {
 		var copy = [], x;
 		for(x = 0; x < cols; x++) {
@@ -153,6 +176,7 @@ jewel.board = (function() {
 		return copy;
 	}
 
+	//helper function that makes sure there are moves on the board
 	function hasMoves() {
 		for(var x = 0; x < cols; x++){
 			for(var y = 0; y < rows; y++){
@@ -165,6 +189,7 @@ jewel.board = (function() {
 		return false;
 	}
 
+	//helper function that determines if a jewel is allowed to move or not (x,y position and if there is a valid swap)
 	function canJewelMove(x, y) {
 		return ((x > 0 && canSwap(x, y, x-1, y)) ||
 				(x < cols - 1 && canSwap(x, y, x+1, y)) ||
@@ -172,6 +197,9 @@ jewel.board = (function() {
 				(y < rows - 1 && canSwap(x, y, x, y+1)));
 	}
 
+	//function that actually does the swapping -- uses canSwap
+	//then checks for any other events -- moving jewels in to replace chained jewels, etc
+	//then callsback with the an array of events
 	function swap(x1, y1, x2, y2, callback) {
 		var tmp, events;
 
@@ -188,6 +216,7 @@ jewel.board = (function() {
 		}
 	}
 
+	//function to print the current board's state
 	function print() {
 		var str = "";
 		for (var y = 0; y < rows; y++) {
@@ -199,6 +228,7 @@ jewel.board = (function() {
 		console.log(str);
 	}
 
+	//expose public functions
 	return {
 		initialize: initialize,
 		print: print,

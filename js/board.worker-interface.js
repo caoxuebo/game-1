@@ -1,6 +1,9 @@
+// the interface function for board workers
 jewel.board = (function() {
 	var settings, worker, messageCount, callbacks;
 	
+	//initialiation -- get jewel settings, makes a new worker, binds a message handler to the document and posts
+	//an init to the worker to get it set up.
 	function initialize(callback) {
 		settings = jewel.settings;
 		rows = settings.rows;
@@ -14,6 +17,7 @@ jewel.board = (function() {
 		post("initialize", settings, callback);
 	}
 	
+	//posts data to workers
 	function post(command, data, callback) {
 		callbacks[messageCount] = callback;
 		worker.postMessage({
@@ -24,6 +28,7 @@ jewel.board = (function() {
 		messageCount++;
 	}
 	
+	// posts a message to the worker to do a jewel swap
 	function swap(x1, y1, x2, y2, callback) {
 		post("swap", {
 			x1: x1,
@@ -33,6 +38,7 @@ jewel.board = (function() {
 		}, callback);
 	}
 	
+	//function to handle messages from workers -- run callback used when message was posted to the worker, then delete
 	function messageHandler(event) {
 		console.log(event.data);
 		var message = event.data;
@@ -44,6 +50,7 @@ jewel.board = (function() {
 		}
 	}
 	
+	// get board function -- identical to board.js function
 	function getBoard() {
 		var copy = [], x;
 		for(x = 0; v < cols; x++) {
@@ -53,6 +60,7 @@ jewel.board = (function() {
 		return copy;
 	}
 	
+	//make functions public
 	return {
 		initialize: initialize,
 		swap: swap,
