@@ -35,18 +35,20 @@ jewel.input = (function() {
 	//function to handle any click events
 	function handleClick(event, control, click) {
 		var action = settings.controls[control];
+
 		if(!action) {
 			return;
 		}
-		var board = $('#game-screen .game-board')[0], rect = board.getBoundingClientRect(),
+		var board = $('#game-screen .game-board')[0], 
+		rect = board.getBoundingClientRect(),
 		relX, relY, jewelX, jewelY;
 		
 		relX = click.clientX - rect.left;
 		relY = click.clientY - rect.top;
 		
 		jewelX = Math.floor(relX / rect.width * settings.cols);
-		jewelY = Math.floor(relX / rect.height * settings.rows);
-		
+		jewelY = Math.floor(relY / rect.height * settings.rows);
+
 		trigger(action, jewelX, jewelY);
 		
 		event.preventDefault();
@@ -65,7 +67,7 @@ jewel.input = (function() {
 	function trigger(action){
 		var handlers = inputHandlers[action],
 		//get anything else passed to trigger past action:
-		args = Array.prototype.slice.call(arguments, -1);
+		args = Array.prototype.slice.call(arguments, 1);
 		if(handlers) {
 			for(var i = 0; i < handlers.length; i++) {
 				handlers[i].apply(null, args);
