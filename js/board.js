@@ -94,7 +94,6 @@ jewel.board = (function() {
 	//another helper function - makes sure the jewels that are being swaps are adjacent
 	function isAdjacent(x1, y1, x2, y2) {
 		var dx = Math.abs(x1 - x2), dy = Math.abs(y1 - y2);
-
 		return (dx+dy === 1);
 	}
 
@@ -201,19 +200,46 @@ jewel.board = (function() {
 	//then checks for any other events -- moving jewels in to replace chained jewels, etc
 	//then callsback with the an array of events
 	function swap(x1, y1, x2, y2, callback) {
-		var tmp, events;
-
-		if(canSwap(x1, y1, x2, y2)) {
-			tmp = getJewel(x1, y1);
-			jewels[x1][y1] = getJewel(x2, y2);
-			jewels[x2][y2] = tmp;
-
-			events = check();
+		var tmp, swap1, swap2, events = [];
+		// swap1 and swap2 elements for pushing into the events array
+		swap1 = {
+			type: "move",
+			data: [{
+					type: getJewel(x1, y1),
+					fromX: x1, fromY: y1, toX: x2, toY: y2
+				}, {
+					type: getJewel(x2, y2),
+					fromX: x2, fromY: y2, toX: x1, toY: y1
+			}]
+		};
+		
+		swap2 = {
+			type: "move",
+			data: [{
+					type: getJewel(x2, y2),
+					fromX: x1, fromY: y1, toX: x2, toY: y2
+				}, {
+					type: getJewel(x1, y1),
+					fromX: x2, fromY: y2, toX: x1, toY: y1
+			}]
+		};
+		
+		// if jewels are adjacent, push a swap event, and if they're actually
+		// swapable, switch them and concat any events from check()...otherwise
+		// push swap2 to events as a badswap for animation purposes
+		if(isAdjacent(x1, y1, x2, y2)) {
+			events.push(swap1);
+			if(canSwap(x1, y1, x2, y2)){
+				tmp = getJewel(x1, y1);
+				jewels[x1][y1] = getJewel(x2, y2);
+				jewels[x2][y2] = tmp;
+				events = events.concat(check());
+			} else {
+				events.push(swap2, {type: "badswap"});
+			}
 
 			callback(events);
-		} else {
-			callback(false);
-		}
+		} 
 	}
 
 	//function to print the current board's state

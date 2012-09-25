@@ -2,25 +2,49 @@
 jewel.screens["game-screen"] = (function() {
 	var board = jewel.board, display = jewel.display, settings = jewel.settings,
 	input = jewel.input, cursor, firstRun = true;
+	var gameState = {
+	};
 	
-	// self explainitory -- calls board initialize with display.initialize callback with display.redraw call back
-	// board sets up the math behind the board, display.init sets up canvas, display.redraw draws them onto the board
+	// self explainitory -- calls board initialize with display.initialize callback 
+	// with display.redraw call back board sets up the math behind the board, display.init
+	//	sets up canvas, display.redraw draws them onto the board
+	// also sets up initial game state.
+	function startGame() {
+		gameState = {
+			level: 0,
+			score: 0,
+			timer: 0,
+			startTime: 0,
+			endTime: 0
+		};
+		cursor = {
+			x: 0,
+			y: 0,
+			selected: false
+		};
+		updateGameInfo();
+		setLevelTimer(true);
+		board.initialize(function(){
+			display.initialize(function() {
+				display.redraw(board.getBoard(), function () {});
+				advanceLevel();
+			});
+		});
+	}
+	
+	//updates the divs with score and level info
+	function updateGameInfo() {
+		$("#game-screen .score span").html(gameState.score);
+		$('#game-screen .level span').html(gameState.level);
+	}
+	
+	// runs setup the board if its the firstRun, then starts the game
 	function run() {
 		if(firstRun) {
 			setup();
 			firstRun = false;
 		}
-		board.initialize(function() {
-			display.initialize(function() {
-				cursor = {
-					x: 0,
-					y: 0,
-					selected: false
-				};
-				display.redraw(board.getBoard(), function() {
-				});
-			});
-		});
+		startGame();
 	}
 	
 	//initializes the input object and binds actions to functions
@@ -33,12 +57,64 @@ jewel.screens["game-screen"] = (function() {
 		input.bind("moveRight", moveRight);
 	}
 	
+	// obvious -- adds one to your level, updates the display, adds a new timer
+	function advanceLevel() {
+		gameState.level++;
+		announce("Level "+ gameState.level);
+		updateGameInfo();
+		gameState.startTime = Date.now();
+		gameState.endTime = settings.baseLevelTimer * Math.pow(gameState.level,
+		-0.05 * gameState.level);
+		setLevelTimer(true);
+		display.levelUp();
+	}
+	
+	// function to display the level up annoucement
+	function announce(str) {
+		var $e = $('#game-screen .annouce');
+		$e.html(str);
+		if(Modernizr.cssanimations) {
+			$e.removeClass('zoomfade');
+			setTimeout(function() {
+				$e.addClass('zoomfade');
+			}, 1);
+		} else {
+			$e.addClass('active');
+			setTimeout(function() {
+				$e.removeClass('active');
+			}, 1000);
+		}
+	}
+	
+	// function that sets and runs the timer based on the level the player is on
+	// uses setTimeout rather than updateAnimation because exact timing is more
+	// critical for the timer
+	function setLevelTimer(reset) {
+		if(gameState.timer) {
+			clearTimeout(gameState.timer);
+			gameState.timer = 0;
+		}
+		if(reset) {
+			gameState.startTime = Date.now();
+			gameState.endTime = settings.baseLevelTimer * Math.pow(gameState.level,
+			-0.05 * gameState.level);
+		}
+		var delta = gameState.startTime + gameState.endTime - Date.now(),
+			percent = (delta / gameState.endTime) * 100,
+			progress = $('#game-screen .time .indicator');
+		if(delta < 0) {
+			gameOver();
+		} else {
+			progress.css("width", percent+"%");
+			gameState.timer = setTimeout(setLevelTimer, 30);
+		}
+	}
+	
 	//function to set cursor x, y, and selection
 	function setCursor(x, y, select) {
 		cursor.x = x;
 		cursor.y = y;
 		cursor.selected = select;
-		console.log(x, y, select);
 		//links the logic in screen.game.js to the display
 		display.setCursor(x, y, select);
 	}
@@ -75,6 +151,16 @@ jewel.screens["game-screen"] = (function() {
 		moveCursor(-1, 0);
 	}
 	
+	function addScore(points) {
+		var nextLevelAt = Math.pow(settings.baseLevelScore, Math.pow(settings.baseLevelExp,
+		gameState.level-1));
+		gameState.score += points;
+		if(gameState.score > nextLevelAt) {
+			advanceLevel();
+		}
+		updateGameInfo();
+	}
+	
 	//callback function for swap (board.js) -- uses the events array 
 	// (from the board.js swap function) to display graphically what events too place
 	function playBoardEvents (events) {
@@ -97,6 +183,11 @@ jewel.screens["game-screen"] = (function() {
 					break;
 				case "refill":
 					display.refill(boardEvent.data, next);
+					annouce("No moves!");
+					break;
+				case "score":
+					addScore(boardEvent.data);
+					next();
 					break;
 				default:
 					next();
@@ -107,6 +198,12 @@ jewel.screens["game-screen"] = (function() {
 			display.redraw(board.getBoard(), function() {
 			});
 		}
+	}
+	
+	function gameOver() {
+		display.gameOver(function() {
+			announce("Game over");
+		});
 	}
 	
 	//function to select jewels -- helper fucntion for move cursor

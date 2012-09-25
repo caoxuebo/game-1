@@ -18,7 +18,10 @@ var jewel = {
 			KEY_SPACE: "selectJewel",
 			CLICK: "selectJewel",
 			TOUCH: "selectJewel"
-		}
+		},
+		baseLevelTimer: 60000,
+		baseLevelScore: 1500,
+		baseLevelExp: 1.05
 	}
 };
 
@@ -72,6 +75,7 @@ window.addEventListener('load', function() {
 	{
 		load: [
 			"js/jquery.js",
+			"js/requestAnimationFrame.js",
 			"js/game.js"
 		]
 	}, {

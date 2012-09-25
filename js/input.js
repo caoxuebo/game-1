@@ -13,10 +13,13 @@ jewel.input = (function() {
 		67: "KEY_C"
 	};
 	
+	// initialization functions -- sets up objects and keybinding
 	function initialize() {
 		inputHandlers = {};
 		var board = $('#game-screen .game-board');
 		
+		// check to see if a keypress is equal to a defined key code adn then
+		// triggers an event if it is
 		$(document).bind("keydown", function(e) {
 			var keyName = keys[event.keyCode];
 			if(keyName && settings.controls[keyName]) {
@@ -24,6 +27,7 @@ jewel.input = (function() {
 				trigger(settings.controls[keyName]);
 			}
 		});
+		// binds mousedown and touch start handlers
 		board.bind("mousedown", function(e) {
 			handleClick(e, "CLICK", e);
 		});
@@ -39,6 +43,8 @@ jewel.input = (function() {
 		if(!action) {
 			return;
 		}
+		// obvious -- get X and Y of jewel that was clicked and trigger the
+		// bound action
 		var board = $('#game-screen .game-board')[0], 
 		rect = board.getBoundingClientRect(),
 		relX, relY, jewelX, jewelY;
